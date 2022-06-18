@@ -6,14 +6,14 @@ import { catchError, retry } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-
+  url="https://localhost:44306/api/";
   constructor(private http:HttpClient) {
    
 
    }
 
    login(){
-     return this.http.get<any>("url").subscribe((data)=>{
+     return this.http.get<any>("login").subscribe((data)=>{
        console.log(data);
      })
    }
