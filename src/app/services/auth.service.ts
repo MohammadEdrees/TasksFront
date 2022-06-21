@@ -1,20 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { loginModel } from '../Models/loginModel';
+import { userModel } from '../Models/userModel';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  url="https://localhost:44306/api/";
+  
+  loginModel!:loginModel;
+  //#region Constructor
   constructor(private http:HttpClient) {
-   
-
-   }
-
-   login(){
-     return this.http.get<any>("login").subscribe((data)=>{
-       console.log(data);
-     })
-   }
+  }
+  //#endregion
+  //#region Login
+   login(model:loginModel){
+     const formData = new FormData();
+     const userData = new userModel();
+     
+     debugger;
+     formData.append('email',model.email);
+     formData.append('password',model.password);
+     this.http.post<userModel>(environment.url+ "Auth/login", formData)
+     .subscribe((user: userModel) => {
+       console.log(user);
+       userData.id=user.id;
+       userData.userName=user.userName;
+       userData.token=user.token;
+       userData.type=user.type;
+      }) as unknown as userModel
+    return userData;
+  }
+   //#endregion
 }

@@ -1,19 +1,58 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { taskModel } from '../Models/taskModel';
+import { userModel } from '../Models/userModel';
+import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
-
-  constructor(private http:HttpClient) { }
-
-  getTasks(){
-    return this.http.get<any>("").subscribe((data)=>{
-      console.log(data);
-    });
-
-  }
+  tasks = [];
+  members!:userModel[];
+  //_________________________
   
+
+  //#region  Constructor
+  constructor(private http:HttpClient) { }
+  //#endregion
+  //#region Lists
+  getTasksApi():Observable<taskModel[]>{
+    return this.http.get<taskModel[]>(environment.url+"Home/GetAllTasks");
+  }
+ 
+  getMembersApi():Observable<userModel[]>{
+    return this.http.get<userModel[]>(environment.url + "Home/GetAllMembers");
+  }
+ 
+
+
+   //#endregion
+  //#region  assignTask
+  MakeTaskDone(taskId:Number):boolean
+  {
+   return this.http.post<boolean>(environment.url+ "Home/MakeItDone?taskId" + taskId, null)
+     .subscribe((res: boolean) => {
+       console.log(res);
+     }) as unknown as boolean;
+  }
+
+  //#endregion
+
+
+  //#region 
+    CreateNewTask(task:taskModel):Observable<taskModel[]>{
+      debugger;
+    const formData = new FormData();
+      formData.append('userMail',task.userMail);
+      formData.append('description',task.description);
+      formData.append('creationDate',task.creationDate);
+      console.log(formData.get('creationDate'));
+     return this.http.post<taskModel[]>(environment.url+"Home/AddTask",formData);
+    }
+  //#endregion
+ 
+
+
+
 }
