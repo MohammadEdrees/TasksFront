@@ -29,12 +29,9 @@ export class HomeService {
 
    //#endregion
   //#region  assignTask
-  MakeTaskDone(taskId:Number):boolean
+  MakeTaskDone(taskId:any):Observable<taskModel[]>
   {
-   return this.http.post<boolean>(environment.url+ "Home/MakeItDone?taskId" + taskId, null)
-     .subscribe((res: boolean) => {
-       console.log(res);
-     }) as unknown as boolean;
+   return this.http.post<taskModel[]>(environment.url+ "Home/MakeItDone?taskId="+ taskId,null);
   }
 
   //#endregion

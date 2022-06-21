@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { loginModel } from '../Models/loginModel';
 import { userModel } from '../Models/userModel';
 import { AuthService } from '../services/auth.service';
@@ -9,9 +10,9 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit {
-  loginModel = new loginModel() ;
+  loginModel!:loginModel;
   userModel = new userModel();
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService,private router:Router) {}
 
   ngOnInit(): void {}
   loginForm = new FormGroup({
@@ -19,11 +20,20 @@ export class AuthComponent implements OnInit {
     password: new FormControl('', Validators.required),
   });
 
-  onSubmit() {
-     debugger;
+  async onSubmit() {
+     this.loginModel=new loginModel();
      this.loginModel.email = this.loginForm.controls['email'].value;
      this.loginModel.password = this.loginForm.controls['password'].value;
-     this.userModel = this.auth.login(this.loginModel);
+       await this.auth.loginApi(this.loginModel).subscribe((user:any)=>{
+        console.log(user);
+        this.userModel.id=user.id;
+        this.userModel.userName=user.userName;
+        this.userModel.token=user.token;
+        this.userModel.type=user.type;
+       localStorage.setItem('userType',user.type);
+
+       });
+      //this.router.navigate(['home']);
      console.warn(this.userModel);
   }
 }

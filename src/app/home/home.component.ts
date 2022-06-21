@@ -18,8 +18,9 @@ export class HomeComponent implements OnInit {
   myControl = new FormControl();
   creationDate = new FormControl();
   description = new FormControl();
+  isDone = new FormControl();
   newTask = new taskModel();
-
+  userType!:any;
   options: string[] = ['One', 'Two', 'Three', 'four', 'five', 'six'];
   filteredOptions!: Observable<string[]>;
 
@@ -49,6 +50,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private home: HomeService) {}
   ngOnInit(): void {
+    this.userType =localStorage.getItem('userType');
+    console.log(this.userType)
     this.getTasks();
     this.getMembers();
     this.filteredOptions = this.myControl.valueChanges.pipe(
@@ -85,11 +88,10 @@ export class HomeComponent implements OnInit {
   }
 
   clickSubmit() {
-    if (this.myControl.value && this.description.value &&this.creationDate.value 
+     
+    if (this.myControl.value && this.description.value &&this.creationDate.value && this.description.value.length >= 10 && this.description.value.length < 100
     ) {
-      if(this.description.value.length >= 10 && this.description.value.length < 100){
-        alert('Description Can;t exceed 100 characters or being less than 10');
-        }
+      
       this.newTask.userMail = this.myControl.value;
       this.newTask.description = this.description.value;
       this.newTask.creationDate = this.creationDate.value;
@@ -101,12 +103,22 @@ export class HomeComponent implements OnInit {
         this.description.setValue('');
         this.creationDate.setValue('');
       });
+
     } else {
-      alert('Complete data plz');
+      alert('Complete data plz or check description length (10:100) characters');
     }
+  }
+
+  markTaskAsDone(id:any){
+    console.log(id);
+    this.home.MakeTaskDone(id).subscribe((data: taskModel[]) => {
+      this.tasksList.length = 0;
+      data.forEach((task) => this.tasksList.push(task));
+      this.myControl.setValue('');
+      this.description.setValue('');
+      this.creationDate.setValue('');
+    });
   }
 }
 
-export class User {
-  name!: string;
-}
+ 

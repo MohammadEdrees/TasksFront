@@ -5,4 +5,5 @@ export class taskModel{
     isDone!:boolean;
     userId!:string;
     userMail!:string;
+    userName!:string;
 }
