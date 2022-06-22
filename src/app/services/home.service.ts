@@ -20,13 +20,15 @@ export class HomeService {
   getTasksApi():Observable<taskModel[]>{
     return this.http.get<taskModel[]>(environment.url+"Home/GetAllTasks");
   }
+
+  getUserTasksApi(id:any):Observable<taskModel[]>{
+    return this.http.get<taskModel[]>(environment.url+"Home/GetMemberTasks?userId="+id);
+  }
+ 
  
   getMembersApi():Observable<userModel[]>{
     return this.http.get<userModel[]>(environment.url + "Home/GetAllMembers");
   }
- 
-
-
    //#endregion
   //#region  assignTask
   MakeTaskDone(taskId:any):Observable<taskModel[]>

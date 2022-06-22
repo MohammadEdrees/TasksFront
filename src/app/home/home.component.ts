@@ -5,12 +5,14 @@ import { taskModel } from '../Models/taskModel';
 import { userModel } from '../Models/userModel';
 import { HomeService } from '../services/home.service';
 import { map, startWith } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
+
 export class HomeComponent implements OnInit {
   tasksList: taskModel[] = [];
   members: userModel[] = [];
@@ -21,64 +23,81 @@ export class HomeComponent implements OnInit {
   isDone = new FormControl();
   newTask = new taskModel();
   userType!:any;
-  options: string[] = ['One', 'Two', 'Three', 'four', 'five', 'six'];
-  filteredOptions!: Observable<string[]>;
+  currentUserId!:any;
+  // options: string[] = ['One', 'Two', 'Three', 'four', 'five', 'six'];
+  filteredOptions!: Observable<userModel[]>;
 
-  mems: any[] = [
-    {
-      id: 1,
-      creationDate: '1/1/2022',
-      description: 'description3',
-      isDone: false,
-      userId: '123554654',
-    },
-    {
-      id: 2,
-      creationDate: '1/1/2022',
-      description: 'description3',
-      isDone: true,
-      userId: '123554654',
-    },
-    {
-      id: 3,
-      creationDate: '1/1/2022',
-      description: 'description3',
-      isDone: false,
-      userId: '123554654',
-    },
-  ];
+  // mems: any[] = [
+  //   {
+  //     id: 1,
+  //     creationDate: '1/1/2022',
+  //     description: 'description3',
+  //     isDone: false,
+  //     userId: '123554654',
+  //   },
+  //   {
+  //     id: 2,
+  //     creationDate: '1/1/2022',
+  //     description: 'description3',
+  //     isDone: true,
+  //     userId: '123554654',
+  //   },
+  //   {
+  //     id: 3,
+  //     creationDate: '1/1/2022',
+  //     description: 'description3',
+  //     isDone: false,
+  //     userId: '123554654',
+  //   },
+  // ];
 
-  constructor(private home: HomeService) {}
+  constructor(private home: HomeService , private router:Router) {}
   ngOnInit(): void {
     this.userType =localStorage.getItem('userType');
+    this.currentUserId =localStorage.getItem('userId');
     console.log(this.userType)
-    this.getTasks();
+    if(this.userType==1){
+      this.getTasks();
+    }else{
+      this.getMyTasks(this.currentUserId);
+    }
     this.getMembers();
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
       map((value) => (typeof value === 'string' ? value : value.name)),
-      map((name) => (name ? this._filter(name) : this.options.slice()))
+      map((name) => (name ? this._filter(name) : this.members.slice()))
     );
   }
   displayFn(user: any): string {
     return user && user.name ? user.name : '';
   }
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+  private _filter(value: userModel): userModel[] {
+    const filterValue = value.email.toLowerCase();
 
-    return this.options.filter(
-      (option) => option.toLowerCase().indexOf(filterValue) === 0
+    return this.members.filter(
+      (members) => members.email.toLowerCase().indexOf(filterValue) === 0
     );
   }
 
-  getTasks() {
+  getTasks()
+  {
     this.home.getTasksApi().subscribe((data: taskModel[]) => {
       console.table(data);
+      this.tasksList.length=0;
       data.forEach((task) => this.tasksList.push(task));
     });
     console.log(this.tasksList);
   }
 
+  getMyTasks(userId:any) {
+    console.log(userId);
+    this.home.getUserTasksApi(userId).subscribe((data: taskModel[]) => {
+      console.table(data);
+      this.tasksList.length=0;
+      data.forEach((task) => this.tasksList.push(task));
+    });
+    console.log(this.tasksList);
+  }
   getMembers() {
     this.home.getMembersApi().subscribe((data: userModel[]) => {
       console.table(data);
@@ -118,6 +137,17 @@ export class HomeComponent implements OnInit {
       this.description.setValue('');
       this.creationDate.setValue('');
     });
+  }
+  markMyTaskAsDone(id:any,userId:any){
+    this.home.MakeTaskDone(id);
+    this.getMyTasks(userId);
+  }
+  logout(){
+   localStorage.clear();
+    this.router.navigate(['login']);
+  }
+  login(){
+    this.router.navigate(['login']);
   }
 }
 

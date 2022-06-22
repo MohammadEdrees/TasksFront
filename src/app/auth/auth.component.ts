@@ -10,9 +10,9 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit {
-  loginModel!:loginModel;
+  loginModel!: loginModel;
   userModel = new userModel();
-  constructor(private auth: AuthService,private router:Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {}
   loginForm = new FormGroup({
@@ -21,19 +21,29 @@ export class AuthComponent implements OnInit {
   });
 
   async onSubmit() {
-     this.loginModel=new loginModel();
-     this.loginModel.email = this.loginForm.controls['email'].value;
-     this.loginModel.password = this.loginForm.controls['password'].value;
-       await this.auth.loginApi(this.loginModel).subscribe((user:any)=>{
-        console.log(user);
-        this.userModel.id=user.id;
-        this.userModel.userName=user.userName;
-        this.userModel.token=user.token;
-        this.userModel.type=user.type;
-       localStorage.setItem('userType',user.type);
+    this.loginModel = new loginModel();
+    this.loginModel.email = this.loginForm.controls['email'].value;
+    this.loginModel.password = this.loginForm.controls['password'].value;
 
-       });
-      //this.router.navigate(['home']);
-     console.warn(this.userModel);
+    await this.auth.loginApi(this.loginModel)
+    .subscribe((user: any) => {
+
+      this.userModel.id = user.id;
+      this.userModel.userName = user.userName;
+      this.userModel.token = user.token;
+      this.userModel.type = user.type;
+
+      localStorage.setItem('userType', user.type);
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('token', user.token);
+       
+      if (this.userModel.token)
+       {
+        this.router.navigate(['home']);
+       } else
+       {
+        alert('check internet or tey again');
+       }
+    });
   }
 }

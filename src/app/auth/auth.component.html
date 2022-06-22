@@ -1,11 +1,15 @@
-<div class="container ">
-     <div class="formContainer">
-      <form class="frm" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-         <input id="emailId" type="text" formControlName="email" placeholder="Your E-mail please">
-         <input id="PassId" type="password" formControlName="password" placeholder="Password Here ">
-           <!-- <button id="submitBtn" type="submit" [disabled]="!loginForm.valid">Login</button> -->
-          <button id="submitBtn" type="submit" >Login</button>
-       </form>
-    </div>
+<div class="container col-md-6">
+   <form (submit)="onSubmit()" [formGroup]="loginForm">
+      <div class="mb-3">
+        <label for="emailId" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="emailId" aria-describedby="emailHelp" formControlName="email">
+        <div id="emailHelp" class="form-text">We'll share your email with any one as we need.</div>
+      </div>
+      <div class="mb-3">
+        <label for="PassId" class="form-label">Password</label>
+        <input type="password" class="form-control" id="PassId" formControlName="password">
+      </div>
+      <button type="submit" id="submitBtn" class="btn btn-primary">Login</button>
+    </form>
+   
 </div>
-

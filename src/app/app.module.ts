@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -14,6 +14,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { FormsModule } from "@angular/forms";
+import { HeadersInterceptor } from './interceptors/headerInterceptor';
+import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +36,10 @@ import { FormsModule } from "@angular/forms";
     MatAutocompleteModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+     {provide:HTTP_INTERCEPTORS,useClass:HeadersInterceptor,multi:true} ,// multi if injectd array 
+     {provide:HTTP_INTERCEPTORS,useClass:ErrorHandlerInterceptor,multi:true} ,// multi if injectd array 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

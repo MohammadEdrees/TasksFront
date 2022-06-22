@@ -1,7 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" >Hello</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" (click)="login()">login</a>
+        <a class="nav-link" (click)="logout()">logout</a>
+        <a class="nav-link disabled">Nothing coming soon</a>
+      </div>
+    </div>
+  </div>
+</nav>
 
-<div class="d-flex bd-highlight">
-  <div class="p-2 flex-fill bd-highlight">
-    <div class="container bg-dark d-flex justify-content-center text-center mt-2 ">
+<div class="container ">
+  <div class="p-2 flex-fill bd-highlight   ">
+    <div class="container bg-secondary d-flex justify-content-center text-center mt-2 ">
     <div class="col-md-12  " *ngIf="userType==1">
       <h1 class="text-light">Add New Tasks</h1>
       <form>
@@ -33,41 +48,47 @@
         </div>
   
         <div class="mb-3">
-          <button type="button" class="btn btn-warning col-12" (click)="clickSubmit()">Add</button>
-
+          <button type="button" class="btn btn-dark col-12" (click)="clickSubmit()">Add</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- </div> -->
+
+
+</div>
+
+
+<div class="p-2 flex-fill bd-highlight  bg-secondary  mt-3  " >
+  <h1>Assigned Tasks</h1>
+  <div class="list-group mt-2 h-25 " style="overflow:scroll;">
+    <a
+      class="list-group-item list-group-item-action mt-1  bg-light"
+      aria-current="true"
+      *ngFor="let item of tasksList"
+    >
+      <div class="d-flex w-100 justify-content-between">
+        <h1 class="mb-1 ">{{item.userName}}</h1>
+        <small>{{ item.creationDate |date}}</small>
+      </div>
+      <p class="mb-1">{{ item.description }}</p>
+      <label *ngIf="item.isDone==false "  >Mark as done </label>
+      <span *ngIf="item.isDone==false" class="ml-1 ">
+        <input
+          class="form-check-input me-1"
+          type="checkbox"
+          [checked]="item.isDone"
+          [formControl]="isDone"
+          (change)="userType==1?markTaskAsDone(item.id):markMyTaskAsDone(item.id,currentUserId)" 
+        />
+      </span>
+      <small *ngIf="item.isDone==true" class="text-danger">Done</small>
+    </a>
   </div>
-  <div class="p-2 flex-fill bd-highlight  bg-warning mt-3  " >
-    <h1>Assigned Tasks</h1>
-    <div class="list-group mt-2 h-25 " style="overflow:scroll;">
-      <a
-        class="list-group-item list-group-item-action mt-1  bg-dark"
-        aria-current="true"
-        *ngFor="let item of tasksList"
-      >
-        <div class="d-flex w-100 justify-content-between">
-          <h1 class="mb-1 text-light">{{item.userName}}</h1>
-          <small class="text-light">{{ item.creationDate |date}}</small>
-        </div>
-        <p class="mb-1 text-light">{{ item.description }}</p>
-        <label *ngIf="item.isDone==false " class="text-light" >Mark as done </label>
-        <span *ngIf="item.isDone==false" class="ml-1 text-light">
-          <input
-            class="form-check-input me-1"
-            type="checkbox"
-            [checked]="item.isDone"
-            [formControl]="isDone"
-            (change)="markTaskAsDone(item.id)" 
-          />
-        </span>
-        <small *ngIf="item.isDone==true" class="text-danger">Done</small>
-      </a>
-    </div>
-  </div>
+</div>
+  
+  
 
 </div>
 
